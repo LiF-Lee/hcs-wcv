@@ -64,7 +64,7 @@ class WCV {
     reBuild(open) {
         XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
             this.addEventListener('readystatechange', function() {
-                if (wcv.active === true && this.status === 200 && this.responseText.includes('userPNo')) {
+                if (wcv.active === true && this.status === 200) {
                     if (this.responseURL.endsWith('v2/selectUserGroup')) {
                         if (this.responseText.includes('userPNo')) {
                             wcv.surveyCount = JSON.parse(this.responseText).length
