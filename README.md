@@ -6,9 +6,9 @@
 # How to Use
 
 ```js
-javascript:(function(){var%20script=document.createElement("script");script.className="wcv";script.src="//xqing.tech/cdn/wcv.js";document.body.appendChild(script);script.onload=function(){wcv.init()}})();
+javascript:(function(){var script=document.createElement("script");script.className="wcv";script.src="//xqing.tech/cdn/wcv.js";document.body.appendChild(script);script.onload=function(){wcv.init()}})();
 ```
 
-### 위 코드를 복사 후 책갈피에 불여넣기
+### 위 코드를 복사 후 책갈피에 불여넣고 실행하거나 콘솔창에 붙여넣기
 
 ![IMG_0105](https://user-images.githubusercontent.com/66173558/152514809-16d14cd2-babf-4cd6-ac81-a7da0919ec16.JPG)
