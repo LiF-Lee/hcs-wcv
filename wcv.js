@@ -5,7 +5,7 @@
 
 class WCV {
     constructor() {
-        this.active = true
+        this.active = false
         this.surveyCount = 0
         this.userList = []
         this.resultMSG = []
@@ -16,28 +16,28 @@ class WCV {
         if (wcv > 1) { return this.removeWCV() }
         if (window.location.hostname !== 'hcs.eduro.go.kr') { return alert(`'hcs.eduro.go.kr' 에서 실행해주세요.`) }
         console.log('WCV init Success')
+        this.changeActiveState()
+        this.createSwitch()
         this.reBuild(XMLHttpRequest.prototype.open)
-        this.activeOpen()
-        this.createToggle()
     }
 
-    removeWCV(){
-        alert('이미 생성했습니다.')
+    removeWCV() {
+        alert('이미 실행 중인 프로그램이 존재합니다.')
         const elements = document.getElementsByClassName('wcv')
         while (elements.length > 1) {
             elements[1].parentNode.removeChild(elements[1])
         }
     }
 
-    createToggle() {
+    createSwitch() {
         const css = `.wcv-wrapper { position: fixed; bottom: 0; right: 0; text-align: center; padding-bottom: 1rem; padding-right: 1rem; z-index: 9999; }
-          #wcv-switch { position: absolute; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
-          .wcv-switch_label { position: relative; cursor: pointer; display: inline-block; width: 58px; height: 28px; background: #fff; border: 2px solid #daa; border-radius: 20px; transition: 0.2s; padding-left: 3px; }
-          .wcv-switch_label:hover { background: #efefef; }
-          .wcv-onf_btn { position: absolute; top: 2px; left: 3px; display: inline-block; width: 20px; height: 20px; border-radius: 20px; background: #daa; transition: 0.2s; }
-          #wcv-switch:checked+.wcv-switch_label { background: #e55; border: 2px solid #e55; }
-          #wcv-switch:checked+.wcv-switch_label:hover { background: #c44; }
-          #wcv-switch:checked+.wcv-switch_label .wcv-onf_btn { left: 31px; background: #fff; box-shadow: 1px 2px 3px #00000020; }`
+            #wcv-switch { position: absolute; appearance: none; -webkit-appearance: none; -moz-appearance: none; }
+            .wcv-switch_label { position: relative; cursor: pointer; display: inline-block; width: 58px; height: 28px; background: #fff; border: 2px solid #daa; border-radius: 20px; transition: 0.2s; padding-left: 3px; }
+            .wcv-switch_label:hover { background: #efefef; }
+            .wcv-onf_btn { position: absolute; top: 2px; left: 3px; display: inline-block; width: 20px; height: 20px; border-radius: 20px; background: #daa; transition: 0.2s; }
+            #wcv-switch:checked+.wcv-switch_label { background: #e55; border: 2px solid #e55; }
+            #wcv-switch:checked+.wcv-switch_label:hover { background: #c44; }
+            #wcv-switch:checked+.wcv-switch_label .wcv-onf_btn { left: 31px; background: #fff; box-shadow: 1px 2px 3px #00000020; }`
         const style = document.createElement('style')
         document.head.appendChild(style)
         style.appendChild(document.createTextNode(css))
@@ -47,32 +47,24 @@ class WCV {
         wrapper.className = 'wcv-wrapper'
         wrapper.innerHTML = `<input type="checkbox" id="wcv-switch" checked><label for="wcv-switch" class="wcv-switch_label"><span class="wcv-onf_btn"></span></label>`
 
-        this.activeEventListener()
+        this.activeSwitchListener()
     }
 
-    activeEventListener() {
+    activeSwitchListener() {
         const switchBtn = document.getElementById('wcv-switch')
         switchBtn.addEventListener('change', () => {
-            if (switchBtn.checked) {
-                this.activeOpen()
-            } else {
-                this.activeClose()
-            }
+            this.changeActiveState()
         })
     }
 
-    activeOpen() {
-        this.active = true
-    }
-
-    activeClose() {
-        this.active = false
+    changeActiveState() {
+        this.active = !this.active
     }
 
     reBuild(open) {
         XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
             this.addEventListener('readystatechange', function() {
-                if (wcv.active === true && this.status === 200) {
+                if (wcv.active === true && this.status === 200 && this.responseText.includes('userPNo')) {
                     if (this.responseURL.endsWith('v2/selectUserGroup')) {
                         if (this.responseText.includes('userPNo')) {
                             wcv.surveyCount = JSON.parse(this.responseText).length
@@ -81,13 +73,13 @@ class WCV {
                     if (this.responseURL.endsWith('v2/getUserInfo')) {
                         if (this.responseText.includes('userPNo')) {
                             const response = JSON.parse(this.responseText)
-                            let isUserNew = false
+                            let isUserNew = true
                             wcv.userList.forEach(user => {
-                                if (user.userPNo === response.userPNo) {
-                                    isUserNew = true
+                                if (`${user.orgCode}${user.userPNo}` === `${response.orgCode}${response.userPNo}`) {
+                                    isUserNew = false
                                 }
                             })
-                            if (isUserNew === false) {
+                            if (isUserNew === true) {
                                 wcv.userList.push(response)
                                 wcv.registerServey(response)
                             }
@@ -113,7 +105,7 @@ class WCV {
                 location.href = '#/loginWithUserInfo'
                 setTimeout(() => {
                     location.href = '#/main'
-                }, 100);
+                }, 100)
                 alert(`[ 자가진단 제출 현황 ]\n\n${wcv.resultMSG.join('\n\n')}`)
             }
         }
