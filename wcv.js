@@ -100,7 +100,7 @@ class WCV {
         xhr.onload = function() {
             const response = JSON.parse(this.responseText)
             const isOK = response.registerDtm !== undefined
-            wcv.resultMSG.push(`[ ${user.upperUserName} | ${user.orgName} ]\n${isOK ? `- 제출완료 (${response.registerDtm})` : '- 제출실패'}`)
+            wcv.resultMSG.push(`[ ${user.userName} | ${user.orgName} ]\n${isOK ? `- 제출완료 (${response.registerDtm})` : '- 제출실패'}`)
             if (wcv.surveyCount === wcv.resultMSG.length) {
                 location.href = '#/loginWithUserInfo'
                 setTimeout(() => {
@@ -116,7 +116,7 @@ class WCV {
             rspns08: '0',
             rspns09: '0',
             upperToken: user.token,
-            upperUserNameEncpt: user.upperUserName
+            upperUserNameEncpt: user.userName
         }))
     }
 }
