@@ -1,5 +1,7 @@
 # hcs-wcv
 
+- 실행 후 로그인하면 자동으로 모든 사용자의 자가진단 설문을 제출합니다.
+
 ![RPReplay_Final1643965627](https://user-images.githubusercontent.com/66173558/152514448-e0bb4cad-2c8e-4a86-acba-9d984ba8f398.GIF)
 
 
